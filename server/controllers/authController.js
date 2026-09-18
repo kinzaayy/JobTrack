@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const generateToken = require("../utils/generateToken");
 
 /**
  * POST /api/auth/register
@@ -25,6 +26,7 @@ async function registerUser(req, res) {
       id: user._id,
       name: user.name,
       email: user.email,
+      token: generateToken(user._id),
     });
   } catch (err) {
     res.status(500).json({ message: "Registration failed.", error: err.message });
@@ -33,8 +35,7 @@ async function registerUser(req, res) {
 
 /**
  * POST /api/auth/login
- * Verifies email + password. Returns user data on success.
- * (No token issued yet — that's added in the next phase.)
+ * Verifies email + password. Returns user data plus a JWT on success.
  */
 async function loginUser(req, res) {
   try {
@@ -58,6 +59,7 @@ async function loginUser(req, res) {
       id: user._id,
       name: user.name,
       email: user.email,
+      token: generateToken(user._id),
     });
   } catch (err) {
     res.status(500).json({ message: "Login failed.", error: err.message });
